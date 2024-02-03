@@ -1,5 +1,8 @@
+
+
 const baseApiUrl = 'https://api.sordinals.com/api/v1';
-    
+  
+
 async function fetchData(url, sectionId, title) {
     console.log(`Fetching data from URL: ${url}`); // Log URL being fetched
     try {
@@ -27,9 +30,12 @@ function displayData(sectionId, title, data) {
     let content = data ? `<h2>${title}</h2><pre>${JSON.stringify(data, null, 2)}</pre>` : `<h2>${title}</h2><p>No data available</p>`;
     section.innerHTML = content;
 
+    const iframe = document.getElementById('inscriptionContentIframe');
     if (data && data.fileUrl) {
-        document.getElementById('content').style.display = 'inline';
-        document.getElementById('content').href = data.fileUrl;
+        iframe.style.display = 'block'; // Show iframe
+        iframe.src = data.fileUrl; // Set the source to the file URL
+    } else {
+        iframe.style.display = 'none'; // Hide iframe if no fileUrl
     }
 }
 
@@ -120,3 +126,4 @@ function handleKeypress(e, type) {
         getDetails(type);
     }
 } 
+

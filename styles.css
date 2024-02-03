@@ -1,10 +1,30 @@
-body {
+body, html {
+    height: 100%;
     font-family: Arial, sans-serif;
     background-color: #121212;
     color: #cccccc;
     margin: 0;
     padding: 0;
+    width: 100%;
     box-sizing: border-box;
+}
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    height: 100%;
+}
+
+.left-column, .right-column {
+    flex: 1;
+    min-width: 50%; /* Ensures both columns try to stay side-by-side */
+}
+
+/* Ensures iframe maintains a square aspect ratio */
+.right-column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
 }
 
 *, *::before, *::after {
@@ -78,17 +98,36 @@ button:hover {
     background-color: #4c5bd4;
 }
 
-.iframe-container {
-    margin-top: 20px;
+/* Updated styles.css with additional rules for responsive layout and iframe display */
+.section {
+    display: flex;
+    flex-direction: row; /* Change direction to row to align items side by side */
+    justify-content: space-between; /* Space out the children */
+    align-items: flex-start; /* Align items at the start of the container */
+    flex-wrap: wrap; /* Allow items to wrap on small screens */
 }
 
-iframe {
+#inscriptionContentIframe {
+    width: 80vw; /* Responsive width based on viewport width */
+    height: 80vw; /* Height equal to width to maintain square shape */
+    max-width: 50%; /* Limit width to half of the viewport width */
+    max-height: 50vh; /* Limit height to half of the viewport height */
     border: none;
-    height: 500px;
-    width: 100%; /* Ensures iframe is responsive */
 }
 
 @media (max-width: 768px) {
+    .section {
+        flex-direction: column; /* Stack items vertically on small screens */
+    }
+    .left-column, .right-column {
+        min-width: 100%; /* Stacks columns on smaller screens */
+    }
+
+
+    #inscriptionContentIframe {
+        max-width: 80%; /* Allows more width on smaller screens */
+        max-height: 80vw; /* Maintains square aspect ratio */
+    }
     .search-group, .section {
         width: 100%; /* Full width on small screens */
         padding: 0 15px; /* Added padding for small screens */
@@ -98,3 +137,4 @@ iframe {
         width: calc(100% - 20px); /* Adjust width to allow for padding */
     }
 }
+
