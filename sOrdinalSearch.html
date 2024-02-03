@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sOrdinals Inscription Info</title>
+    <link rel="stylesheet" href="styles.css"> <!-- You can link to your CSS file here -->
+</head>
+<body>
+    <div>
+        <div>
+            <input type="text" id="inscriptionNumberInput" placeholder="Enter Inscription Number" onkeypress="handleKeypress(event, 'number')">
+            <button onclick="getDetails('number', document.getElementById('inscriptionNumberInput').value)">Search by Number</button>
+        </div>
+        <div>
+            <input type="text" id="inscriptionHashInput" placeholder="Enter Inscription ID (Hash)" onkeypress="handleKeypress(event, 'hash')">
+            <button onclick="getDetails('hash', document.getElementById('inscriptionHashInput').value)">Search by Hash</button>
+        </div>
+        <div>
+            <input type="text" id="ownerAddressInput" placeholder="Enter Owner Address" onkeypress="handleKeypress(event, 'owner')">
+            <button onclick="getDetails('owner', document.getElementById('ownerAddressInput').value)">Search Owned Inscriptions</button>
+        </div>
+        <div>
+            <input type="text" id="parentIDInput" placeholder="Enter Parent ID" onkeypress="handleKeypress(event, 'parent')">
+            <button onclick="getDetails('parent')">Search by Parent ID</button>
+        </div>   
+     </div>
+    <div id="app">
+        <div class="section" id="inscriptionDetails">Inscription details will appear here...</div>
+        <p id="childCount"></p>
+        <p id="childDetails"></p>
+
+        <div class="section" id="inscriptionData">
+            <h2>Inscription Raw Data</h2>
+            <p>Loading... <a id="content" href="#" style="display: none;">View Content</a>  <a id="viewSourceLink" href="#" style="display: none;">View Source</a></p>
+        </div>
+        <div class="section" id="ownedInscriptions">Details about other inscriptions held in the same address will appear here...</div>
+    </div>
+    <script src="main.js"></script> <!-- Link to your JavaScript file -->
+</body>
+</html>
