@@ -46,10 +46,11 @@ async function fetchAndDisplayChildCount(parentInscriptionHash) {
         const childData = await response.json();
         console.log(`Children data received:`, childData);
 
-        // Update the children count display
-        document.getElementById('childCount').innerHTML = `Number of Children: ${childData.count}`;
-
+        // Check if children count is greater than 0
         if (childData.count > 0 && childData.data.length > 0) {
+            // Update the children count display
+            document.getElementById('childCount').innerHTML = `PARENT INSCRIPTION - Number of Children: ${childData.count}`;
+
             // Fetch and display full details of the first child
             const firstChild = childData.data[0]; // Assuming this contains enough info to fetch more details
             // Construct the URL to fetch full details of the first child - adjust as needed
@@ -64,6 +65,8 @@ async function fetchAndDisplayChildCount(parentInscriptionHash) {
             // You might need to adjust 'childDetails' to match your HTML structure or requirements
             displayData('childDetails', 'First Child Details', childDetailsData);
         } else {
+            // Hide the children count display if no children found
+            document.getElementById('childCount').style.display = 'none';
             document.getElementById('childDetails').innerHTML = 'No children found.';
         }
     } catch (error) {
@@ -72,6 +75,7 @@ async function fetchAndDisplayChildCount(parentInscriptionHash) {
         document.getElementById('childDetails').innerHTML = `Error: ${error.message}`;
     }
 }
+
 
 
 
