@@ -1,5 +1,8 @@
+
+
 const baseApiUrl = 'https://api.sordinals.com/api/v1';
-    
+  
+
 async function fetchData(url, sectionId, title) {
     console.log(`Fetching data from URL: ${url}`); // Log URL being fetched
     try {
@@ -18,20 +21,91 @@ async function fetchData(url, sectionId, title) {
     } catch (error) {
         console.error('Fetch error:', error);
         displayData(sectionId, title, { error: error.message });
+        console.log(`Failed to fetch or display data for: ${url}`);
     }
 }
 
-function displayData(sectionId, title, data) {
+function adjustIframeSize(iframe) {
+    const width = iframe.clientWidth; // Use clientWidth for CSS width
+    iframe.style.height = `${width}px`; // Set height equal to current width
+}
+
+async function displayData(sectionId, title, data, isParent = true) {
     console.log(`Displaying data for ${title}`); // Log display action
     const section = document.getElementById(sectionId);
     let content = data ? `<h2>${title}</h2><pre>${JSON.stringify(data, null, 2)}</pre>` : `<h2>${title}</h2><p>No data available</p>`;
     section.innerHTML = content;
 
-    if (data && data.fileUrl) {
-        document.getElementById('content').style.display = 'inline';
-        document.getElementById('content').href = data.fileUrl;
+    if (isParent) {
+        const iframe = document.getElementById('inscriptionContentIframe');
+        if (data && data.fileUrl) {
+            console.log(`Content type: ${data.contentType || 'Unknown'}, URL: ${data.fileUrl}`);
+            iframe.style.display = 'block'; // Make sure this is before setting src to ensure dimensions are calculable.
+
+            if (data.contentType && data.contentType.startsWith('image/')) {
+                const imageHTML = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body, html {
+                                margin: 0;
+                                padding: 0;
+                                width: 100%;
+                                height: 100%;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                background-color: #f0f0f0;
+                            }
+                            img {
+                                width: 100%; /* Scale up to fit the width */
+                                height: 100%;
+                                max-width: 100%; /* Max width is 100% of the container */
+                                max-height: 100%; /* Max height is 100% of the container */
+                                object-fit: contain; /* Use 'cover' if you want to fill the area */
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <img src="${data.fileUrl}" alt="Inscription Image">
+                    </body>
+                    </html>
+                `;
+                const blob = new Blob([imageHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                iframe.src = url;
+                console.log(`Iframe set to display image from blob URL: ${url}`);
+                iframe.onload = function() {
+                    URL.revokeObjectURL(url);
+                    adjustIframeSize(iframe); // Adjust size after content is loaded
+                };
+                iframe.onerror = function() {
+                    console.error(`Error loading image content in iframe.`);
+                    URL.revokeObjectURL(url);
+                };
+            } else {
+                iframe.src = data.fileUrl;
+                console.log(`Setting iframe src to: ${data.fileUrl}`);
+                iframe.onload = function() {
+                    console.log(`Iframe loaded content from: ${iframe.src}`);
+                    adjustIframeSize(iframe); // Adjust size after content is loaded
+                };
+                iframe.onerror = function() {
+                    console.error(`Error loading content in iframe from: ${iframe.src}`);
+                };
+            }
+        } else {
+            iframe.style.display = 'none';
+            console.log('No content to display, iframe hidden');
+        }
     }
 }
+
+
+
+
+
 
 async function fetchAndDisplayChildCount(parentInscriptionHash) {
     // This URL fetches the count and basic details of children, you might need to adjust it
@@ -49,8 +123,12 @@ async function fetchAndDisplayChildCount(parentInscriptionHash) {
         // Check if children count is greater than 0
         if (childData.count > 0 && childData.data.length > 0) {
             // Update the children count display
-            document.getElementById('childCount').innerHTML = `PARENT INSCRIPTION - Number of Children: ${childData.count}`;
-
+            const childCountElement = document.getElementById('childCount');
+            if (childCountElement) {
+                childCountElement.innerHTML = `PARENT INSCRIPTION - Number of Children: ${childData.count}`;
+            } else {
+                console.error('Element #childCount not found');
+            }
             // Fetch and display full details of the first child
             const firstChild = childData.data[0]; // Assuming this contains enough info to fetch more details
             // Construct the URL to fetch full details of the first child - adjust as needed
@@ -63,7 +141,7 @@ async function fetchAndDisplayChildCount(parentInscriptionHash) {
             console.log(`First child details data received:`, childDetailsData);
             // Utilize the displayData function to show the details of the first child
             // You might need to adjust 'childDetails' to match your HTML structure or requirements
-            displayData('childDetails', 'First Child Details', childDetailsData);
+            displayData('childDetails', 'First Child Details', childDetailsData, false);
         } else {
             // Hide the children count display if no children found
             document.getElementById('childCount').style.display = 'none';
@@ -120,3 +198,4 @@ function handleKeypress(e, type) {
         getDetails(type);
     }
 } 
+
