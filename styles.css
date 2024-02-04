@@ -108,8 +108,8 @@ button:hover {
 }
 
 #inscriptionContentIframe {
-    width: 80vw; /* Responsive width based on viewport width */
-    height: 80vw; /* Height equal to width to maintain square shape */
+    width: 100%;
+    height: 500px; /* Adjust as needed */
     max-width: 50%; /* Limit width to half of the viewport width */
     max-height: 50vh; /* Limit height to half of the viewport height */
     border: none;
