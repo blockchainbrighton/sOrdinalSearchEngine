@@ -55,8 +55,12 @@ async function fetchAndDisplayChildCount(parentInscriptionHash) {
         // Check if children count is greater than 0
         if (childData.count > 0 && childData.data.length > 0) {
             // Update the children count display
-            document.getElementById('childCount').innerHTML = `PARENT INSCRIPTION - Number of Children: ${childData.count}`;
-
+            const childCountElement = document.getElementById('childCount');
+            if (childCountElement) {
+                childCountElement.innerHTML = `PARENT INSCRIPTION - Number of Children: ${childData.count}`;
+            } else {
+                console.error('Element #childCount not found');
+            }
             // Fetch and display full details of the first child
             const firstChild = childData.data[0]; // Assuming this contains enough info to fetch more details
             // Construct the URL to fetch full details of the first child - adjust as needed
