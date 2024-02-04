@@ -25,7 +25,7 @@ async function fetchData(url, sectionId, title) {
     }
 }
 
-function displayData(sectionId, title, data, isParent = true) {
+async function displayData(sectionId, title, data, isParent = true) {
     console.log(`Displaying data for ${title}`); // Log display action
     const section = document.getElementById(sectionId);
     let content = data ? `<h2>${title}</h2><pre>${JSON.stringify(data, null, 2)}</pre>` : `<h2>${title}</h2><p>No data available</p>`;
@@ -33,29 +33,68 @@ function displayData(sectionId, title, data, isParent = true) {
 
     if (isParent) {
         const iframe = document.getElementById('inscriptionContentIframe');
-        if (data && data.fileUrl) {
-            // Example conditional logic based on hypothetical content type data
-            if (data.contentType === 'image/jpeg') {
-                console.log('Displaying JPEG content');
-                // Adjust iframe or container styling here
-            } else if (data.contentType === 'text/html') {
-                console.log('Displaying HTML content');
-                // Adjust differently or leave as default
-            }
-        
-            console.log(`Setting iframe src to: ${data.fileUrl}`); // Log the URL being set
+        if (data && data.fileUrl && data.contentType.startsWith('image/')) {
+            console.log(`Displaying image content. Content type: ${data.contentType || 'Unknown'}, URL: ${data.fileUrl}`);
+
+            // Create a blob URL for an HTML document that embeds the image
+            const imageHTML = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body, html {
+                            margin: 0;
+                            padding: 0;
+                            height: 100%;
+                            overflow: hidden;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            background-color: #f0f0f0; /* Optional: background color */
+                        }
+                        img {
+                            max-width: 100%;
+                            max-height: 100%;
+                            object-fit: contain; /* This ensures the image is scaled properly */
+                        }
+                    </style>
+                </head>
+                <body>
+                    <img src="${data.fileUrl}" alt="Inscription Image">
+                </body>
+                </html>
+            `;
+
+            // Convert the HTML string into a blob URL
+            const blob = new Blob([imageHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+
+            // Use the blob URL as the source for the iframe
+            iframe.src = url;
+            iframe.style.display = 'block';
+            console.log(`Iframe set to display image from blob URL: ${url}`);
+
+            iframe.onload = () => {
+                console.log(`Iframe loaded image content.`);
+                // Release the blob URL after the iframe has loaded
+                URL.revokeObjectURL(url);
+            };
+            iframe.onerror = () => {
+                console.error(`Error loading image content in iframe.`);
+                URL.revokeObjectURL(url); // Clean up blob URL on error as well
+            };
+        } else if (data.contentType === 'text/html') {
+            // Logic for displaying HTML content
             iframe.style.display = 'block';
             iframe.src = data.fileUrl;
-            console.log(`Iframe display style: ${iframe.style.display}`);
-            console.log(`Iframe current src: ${iframe.src}`);
-            iframe.onload = () => console.log(`Iframe loaded content from: ${iframe.src}`);
-
-
+            console.log(`Setting iframe src to HTML content: ${data.fileUrl}`);
         } else {
             iframe.style.display = 'none';
+            console.log('No content to display, iframe hidden');
         }
     }
 }
+
 
 
 async function fetchAndDisplayChildCount(parentInscriptionHash) {
