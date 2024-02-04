@@ -33,67 +33,72 @@ async function displayData(sectionId, title, data, isParent = true) {
 
     if (isParent) {
         const iframe = document.getElementById('inscriptionContentIframe');
-        if (data && data.fileUrl && data.contentType.startsWith('image/')) {
-            console.log(`Displaying image content. Content type: ${data.contentType || 'Unknown'}, URL: ${data.fileUrl}`);
+        if (data && data.fileUrl) {
+            console.log(`Content type: ${data.contentType || 'Unknown'}, URL: ${data.fileUrl}`);
+            iframe.style.display = 'block'; // Make sure this is before setting src to ensure dimensions are calculable.
 
-            // Create a blob URL for an HTML document that embeds the image
-            const imageHTML = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style>
-                        body, html {
-                            margin: 0;
-                            padding: 0;
-                            height: 100%;
-                            overflow: hidden;
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            background-color: #f0f0f0; /* Optional: background color */
-                        }
-                        img {
-                            max-width: 100%;
-                            max-height: 100%;
-                            object-fit: contain; /* This ensures the image is scaled properly */
-                        }
-                    </style>
-                </head>
-                <body>
-                    <img src="${data.fileUrl}" alt="Inscription Image">
-                </body>
-                </html>
-            `;
-
-            // Convert the HTML string into a blob URL
-            const blob = new Blob([imageHTML], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-
-            // Use the blob URL as the source for the iframe
-            iframe.src = url;
-            iframe.style.display = 'block';
-            console.log(`Iframe set to display image from blob URL: ${url}`);
-
-            iframe.onload = () => {
-                console.log(`Iframe loaded image content.`);
-                // Release the blob URL after the iframe has loaded
-                URL.revokeObjectURL(url);
-            };
-            iframe.onerror = () => {
-                console.error(`Error loading image content in iframe.`);
-                URL.revokeObjectURL(url); // Clean up blob URL on error as well
-            };
-        } else if (data.contentType === 'text/html') {
-            // Logic for displaying HTML content
-            iframe.style.display = 'block';
-            iframe.src = data.fileUrl;
-            console.log(`Setting iframe src to HTML content: ${data.fileUrl}`);
+            if (data.contentType && data.contentType.startsWith('image/')) {
+                const imageHTML = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body, html {
+                                margin: 0;
+                                padding: 0;
+                                height: 100%;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                background-color: #f0f0f0;
+                            }
+                            img {
+                                max-width: 100%;
+                                max-height: 100%;
+                                object-fit: contain;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <img src="${data.fileUrl}" alt="Inscription Image">
+                    </body>
+                    </html>
+                `;
+                const blob = new Blob([imageHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                iframe.src = url;
+                console.log(`Iframe set to display image from blob URL: ${url}`);
+                iframe.onload = function() {
+                    URL.revokeObjectURL(url);
+                    adjustIframeSize(iframe); // Adjust size after content is loaded
+                };
+                iframe.onerror = function() {
+                    console.error(`Error loading image content in iframe.`);
+                    URL.revokeObjectURL(url);
+                };
+            } else {
+                iframe.src = data.fileUrl;
+                console.log(`Setting iframe src to: ${data.fileUrl}`);
+                iframe.onload = function() {
+                    console.log(`Iframe loaded content from: ${iframe.src}`);
+                    adjustIframeSize(iframe); // Adjust size after content is loaded
+                };
+                iframe.onerror = function() {
+                    console.error(`Error loading content in iframe from: ${iframe.src}`);
+                };
+            }
         } else {
             iframe.style.display = 'none';
             console.log('No content to display, iframe hidden');
         }
     }
 }
+
+function adjustIframeSize(iframe) {
+    const width = iframe.clientWidth; // Use clientWidth for CSS width
+    iframe.style.height = `${width}px`; // Set height equal to current width
+}
+
 
 
 

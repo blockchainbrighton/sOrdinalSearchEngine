@@ -8,35 +8,26 @@ body, html {
     width: 100%;
     box-sizing: border-box;
 }
+
 .container {
     display: flex;
     flex-wrap: wrap;
     height: 100%;
 }
 
-.left-column, .right-column {
-    flex: 1;
-    min-width: 50%; /* Ensures both columns try to stay side-by-side */
+.left-column {
+    flex: 0 0 60%; /* 60% width, no flex-grow or flex-shrink */
+    min-width: 0; /* Reset min-width to allow resizing */
 }
 
-/* Ensures iframe maintains a square aspect ratio */
 .right-column {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+    flex: 0 0 40%; /* 40% width, no flex-grow or flex-shrink */
+    min-width: 0; /* Reset min-width to allow resizing */
 }
+
 
 *, *::before, *::after {
     box-sizing: inherit;
-}
-
-.search-group {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 10px;
 }
 
 .section {
@@ -45,23 +36,30 @@ body, html {
     border-radius: 8px;
     margin-bottom: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: auto; /* Make content scrollable */
+    max-height: 300px; /* Set a maximum height */
 }
 
-.section h2 {
-    color: #4caf50;
+/* Wrap the iframe in a container */
+.iframe-container {
+    margin-top: 300px; /* Add a top margin of 400px to the container */
+    width:132%; /* 100% width */
+    position:relative;
 }
 
-#childCount {
-    color: rgb(255, 140, 0);
-}
-
-pre, iframe {
+iframe {
+    position:absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* Set width to fill the container */
+    height: 100%; /* Set height to fill the container */
     background-color: #2c2c2c;
     color: #e0e0e0;
     padding: 10px;
     border-radius: 5px;
-    width: 100%;
+    border: none; /* Optional: remove border for iframe */
 }
+
 
 a {
     color: #4caf50;
