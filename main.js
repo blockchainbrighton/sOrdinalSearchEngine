@@ -25,6 +25,11 @@ async function fetchData(url, sectionId, title) {
     }
 }
 
+function adjustIframeSize(iframe) {
+    const width = iframe.clientWidth; // Use clientWidth for CSS width
+    iframe.style.height = `${width}px`; // Set height equal to current width
+}
+
 async function displayData(sectionId, title, data, isParent = true) {
     console.log(`Displaying data for ${title}`); // Log display action
     const section = document.getElementById(sectionId);
@@ -46,6 +51,7 @@ async function displayData(sectionId, title, data, isParent = true) {
                             body, html {
                                 margin: 0;
                                 padding: 0;
+                                width: 100%;
                                 height: 100%;
                                 display: flex;
                                 justify-content: center;
@@ -53,9 +59,11 @@ async function displayData(sectionId, title, data, isParent = true) {
                                 background-color: #f0f0f0;
                             }
                             img {
-                                max-width: 100%;
-                                max-height: 100%;
-                                object-fit: contain;
+                                width: 100%; /* Scale up to fit the width */
+                                height: 100%;
+                                max-width: 100%; /* Max width is 100% of the container */
+                                max-height: 100%; /* Max height is 100% of the container */
+                                object-fit: contain; /* Use 'cover' if you want to fill the area */
                             }
                         </style>
                     </head>
@@ -94,10 +102,7 @@ async function displayData(sectionId, title, data, isParent = true) {
     }
 }
 
-function adjustIframeSize(iframe) {
-    const width = iframe.clientWidth; // Use clientWidth for CSS width
-    iframe.style.height = `${width}px`; // Set height equal to current width
-}
+
 
 
 

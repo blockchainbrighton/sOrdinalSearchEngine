@@ -39,26 +39,33 @@ body, html {
     overflow: auto; /* Make content scrollable */
     max-height: 300px; /* Set a maximum height */
 }
+.section.scrollable {
+    overflow: auto; /* Make content scrollable */
+    max-height: 300px; /* Set a maximum height */
+    /* Other styles as required */
+}
 
 /* Wrap the iframe in a container */
 .iframe-container {
-    margin-top: 300px; /* Add a top margin of 400px to the container */
-    width:132%; /* 100% width */
-    position:relative;
+    position: relative;
+    width: 100%; /* Full width of the right-column container */
+    /* Remove the margin-top unless it's needed for other styling purposes */
+    /* margin-top: 300px; remove or adjust this as necessary */
+    padding-top: 100%; /* Padding-top for 1:1 aspect ratio */
 }
 
 iframe {
-    position:absolute;
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100%; /* Set width to fill the container */
-    height: 100%; /* Set height to fill the container */
+    width: 100%; /* Fill the width of the iframe-container */
+    height: 100%; /* Fill the height of the iframe-container */
     background-color: #2c2c2c;
     color: #e0e0e0;
-    padding: 10px;
     border-radius: 5px;
-    border: none; /* Optional: remove border for iframe */
+    border: none; /* Remove the border for the iframe */
 }
+
 
 
 a {
