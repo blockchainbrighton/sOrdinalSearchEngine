@@ -73,6 +73,27 @@ a {
     text-decoration: none;
 }
 
+.child-container {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    overflow: auto;
+    max-height: 300px; /* Adjust as needed */
+}
+
+.child-image {
+    flex: 0 1 auto; /* Do not grow, but allow shrinking */
+    width: auto; /* Auto width to maintain aspect ratio */
+    height: 100%; /* Full height of the container */
+    border: none;
+}
+
+.child-details {
+    flex: 1; /* Take up remaining space */
+    overflow: auto; /* Scroll if content overflows */
+}
+
+
 a:hover {
     text-decoration: underline;
 }
