@@ -18,7 +18,10 @@
             <button onclick="getDetails('owner', document.getElementById('ownerAddressInput').value)">Search Owned Inscriptions</button>
             <input type="text" id="parentIDInput" placeholder="Enter Parent ID" onkeypress="handleKeypress(event, 'parent')">
             <button onclick="getDetails('parent')">Search by Parent ID</button>
-            <div id="childCount"></div>
+         
+            <div id="childCount">
+            <p id="childCount"></p>
+            </div>            
             <div class="section" id="inscriptionDetails">Inscription details will appear here...</div>
             <p id="childDetails"></p>
             <div class="section" id="inscriptionData">Inscription Raw Data will appear here...</div>

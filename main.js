@@ -21,23 +21,42 @@ async function fetchData(url, sectionId, title) {
     } catch (error) {
         console.error('Fetch error:', error);
         displayData(sectionId, title, { error: error.message });
+        console.log(`Failed to fetch or display data for: ${url}`);
     }
 }
 
-function displayData(sectionId, title, data) {
+function displayData(sectionId, title, data, isParent = true) {
     console.log(`Displaying data for ${title}`); // Log display action
     const section = document.getElementById(sectionId);
     let content = data ? `<h2>${title}</h2><pre>${JSON.stringify(data, null, 2)}</pre>` : `<h2>${title}</h2><p>No data available</p>`;
     section.innerHTML = content;
 
-    const iframe = document.getElementById('inscriptionContentIframe');
-    if (data && data.fileUrl) {
-        iframe.style.display = 'block'; // Show iframe
-        iframe.src = data.fileUrl; // Set the source to the file URL
-    } else {
-        iframe.style.display = 'none'; // Hide iframe if no fileUrl
+    if (isParent) {
+        const iframe = document.getElementById('inscriptionContentIframe');
+        if (data && data.fileUrl) {
+            // Example conditional logic based on hypothetical content type data
+            if (data.contentType === 'image/jpeg') {
+                console.log('Displaying JPEG content');
+                // Adjust iframe or container styling here
+            } else if (data.contentType === 'text/html') {
+                console.log('Displaying HTML content');
+                // Adjust differently or leave as default
+            }
+        
+            console.log(`Setting iframe src to: ${data.fileUrl}`); // Log the URL being set
+            iframe.style.display = 'block';
+            iframe.src = data.fileUrl;
+            console.log(`Iframe display style: ${iframe.style.display}`);
+            console.log(`Iframe current src: ${iframe.src}`);
+            iframe.onload = () => console.log(`Iframe loaded content from: ${iframe.src}`);
+
+
+        } else {
+            iframe.style.display = 'none';
+        }
     }
 }
+
 
 async function fetchAndDisplayChildCount(parentInscriptionHash) {
     // This URL fetches the count and basic details of children, you might need to adjust it
@@ -73,7 +92,7 @@ async function fetchAndDisplayChildCount(parentInscriptionHash) {
             console.log(`First child details data received:`, childDetailsData);
             // Utilize the displayData function to show the details of the first child
             // You might need to adjust 'childDetails' to match your HTML structure or requirements
-            displayData('childDetails', 'First Child Details', childDetailsData);
+            displayData('childDetails', 'First Child Details', childDetailsData, false);
         } else {
             // Hide the children count display if no children found
             document.getElementById('childCount').style.display = 'none';
