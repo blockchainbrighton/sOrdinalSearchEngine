@@ -1,7 +1,54 @@
 
 
 const baseApiUrl = 'https://api.sordinals.com/api/v1';
+console.log('Initial userSession in local storage:', localStorage.getItem('userSession'));
+
+window.onerror = function(message, source, lineno, colno, error) {
+    console.error('Global error caught:', message, 'at', source, lineno, colno, error);
+};
+
   
+document.addEventListener('DOMContentLoaded', function() {
+    const loginBtn = document.getElementById('loginBtn');
+    const walletAddressSpan = document.getElementById('walletAddress');
+
+    console.log('Page loaded. Setting up login status check.');
+
+    // Function to simulate checking for a successful login
+    function checkLoginStatus() {
+        console.log('Checking login status...');
+
+        // Example: Check if userSession is set in local storage
+        const userSessionStr = localStorage.getItem('userSession');
+        if (userSessionStr) {
+            console.log('User session found:', userSessionStr);
+            try {
+                const userSession = JSON.parse(userSessionStr);
+                const walletAddress = userSession.walletAddress; // Adjust based on actual structure
+                
+                if(walletAddress) {
+                    console.log('Updating UI with wallet address:', walletAddress);
+                    loginBtn.textContent = 'Wallet Connected';
+                    walletAddressSpan.textContent = walletAddress;
+                    walletAddressSpan.style.display = 'inline';
+                } else {
+                    console.log('Wallet address not found in user session.');
+                }
+            } catch (error) {
+                console.error('Error parsing user session:', error);
+            }
+        } else {
+            console.log('No user session found in local storage.');
+        }
+    }
+
+    // Periodically check for login status
+    setInterval(checkLoginStatus, 1000); // Check every 1000 milliseconds (1 second)
+});
+
+loginBtn.addEventListener('click', function() {
+    console.log('Login button clicked.');
+});
 
 async function fetchData(url, sectionId, title) {
     console.log(`Fetching data from URL: ${url}`); // Log URL being fetched
