@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
- "scripts": {
-  "start": "parcel index.html"
-},
+  "scripts": {
+    "dev": "webpack serve --mode development",
+    "start": "webpack-dev-server --open",
+    "build": "webpack"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
