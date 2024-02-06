@@ -1,29 +1,34 @@
 
 
 const baseApiUrl = 'https://api.sordinals.com/api/v1';
+
+
 console.log('Initial userSession in local storage:', localStorage.getItem('userSession'));
 
 window.onerror = function(message, source, lineno, colno, error) {
     console.error('Global error caught:', message, 'at', source, lineno, colno, error);
 };
 
-  
 document.addEventListener('DOMContentLoaded', function() {
     const loginBtn = document.getElementById('loginBtn');
     const walletAddressSpan = document.getElementById('walletAddress');
 
     console.log('Page loaded. Setting up login status check.');
 
+    loginBtn.addEventListener('click', function() {
+        console.log('Login button clicked. Initiating login process.');
+    });
+
     // Function to simulate checking for a successful login
     function checkLoginStatus() {
         console.log('Checking login status...');
 
-        // Example: Check if userSession is set in local storage
         const userSessionStr = localStorage.getItem('userSession');
         if (userSessionStr) {
             console.log('User session found:', userSessionStr);
             try {
                 const userSession = JSON.parse(userSessionStr);
+                console.log('Parsed user session:', userSession);
                 const walletAddress = userSession.walletAddress; // Adjust based on actual structure
                 
                 if(walletAddress) {
@@ -42,13 +47,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Periodically check for login status
     setInterval(checkLoginStatus, 1000); // Check every 1000 milliseconds (1 second)
 });
 
 loginBtn.addEventListener('click', function() {
     console.log('Login button clicked.');
 });
+
+window.addEventListener('storage', function(e) {
+    console.log('Local storage changed:', e.key, e.newValue);
+});
+
+window.addEventListener('beforeunload', function(e) {
+    console.log('Page is about to unload. Checking for reload triggers.');
+    // Optionally, return a string to show a confirmation dialog (not always allowed by modern browsers)
+});
+
 
 async function fetchData(url, sectionId, title) {
     console.log(`Fetching data from URL: ${url}`); // Log URL being fetched
