@@ -3,74 +3,75 @@
 const baseApiUrl = 'https://api.sordinals.com/api/v1';
 console.log('Initial userSession in local storage:', localStorage.getItem('userSession'));
 
-window.onerror = function(message, source, lineno, colno, error) {
-    console.error('Global error caught:', message, 'at', source, lineno, colno, error);
-};
+// Simplified Global Error Handling
+window.onerror = (message, source, lineno, colno, error) =>
+    console.error(`Global error caught: ${message} at ${source} ${lineno}:${colno}`, error);
 
-  
-document.addEventListener('DOMContentLoaded', function() {
+// Optimized DOMContentLoaded Event Listener and Login Status Check
+document.addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.getElementById('loginBtn');
     const walletAddressSpan = document.getElementById('walletAddress');
-
     console.log('Page loaded. Setting up login status check.');
 
-    // Function to simulate checking for a successful login
-    function checkLoginStatus() {
-        console.log('Checking login status...');
+    let loginCheckInterval;
 
-        // Example: Check if userSession is set in local storage
-        const userSessionStr = localStorage.getItem('userSession');
-        if (userSessionStr) {
-            console.log('User session found:', userSessionStr);
-            try {
-                const userSession = JSON.parse(userSessionStr);
-                const walletAddress = userSession.walletAddress; // Adjust based on actual structure
-                
-                if(walletAddress) {
-                    console.log('Updating UI with wallet address:', walletAddress);
-                    loginBtn.textContent = 'Wallet Connected';
-                    walletAddressSpan.textContent = walletAddress;
-                    walletAddressSpan.style.display = 'inline';
-                } else {
-                    console.log('Wallet address not found in user session.');
-                }
-            } catch (error) {
-                console.error('Error parsing user session:', error);
-            }
-        } else {
-            console.log('No user session found in local storage.');
-        }
-    }
+    // const updateUIWithWalletAddress = (walletAddress) => {
+    //     console.log('Updating UI with wallet address:', walletAddress);
+    //     loginBtn.textContent = 'Wallet Connected';
+    //     walletAddressSpan.textContent = walletAddress;
+    //     walletAddressSpan.style.display = 'inline';
 
-    // Periodically check for login status
-    setInterval(checkLoginStatus, 1000); // Check every 1000 milliseconds (1 second)
-});
+    //     // Clear the interval to stop checking login status after successful login
+    //     clearInterval(loginCheckInterval);
+    // };
 
-loginBtn.addEventListener('click', function() {
-    console.log('Login button clicked.');
+//     const checkLoginStatus = () => {
+//         console.log('Checking login status...');
+//         const userSessionStr = localStorage.getItem('userSession');
+//         if (!userSessionStr) {
+//             console.log('No user session found in local storage.');
+//             return;
+//         }
+
+//         try {
+//             const { walletAddress } = JSON.parse(userSessionStr);
+//             if (walletAddress) {
+//                 updateUIWithWalletAddress(walletAddress);
+//             } else {
+//                 console.log('Wallet address not found in user session.');
+//             }
+//         } catch (error) {
+//             console.error('Error parsing user session:', error);
+//         }
+//     };
+
+//     // Start checking login status every 1 second
+//     loginCheckInterval = setInterval(checkLoginStatus, 5000);
+
+//     loginBtn.addEventListener('click', () => console.log('Login button clicked.'));
+// 
 });
 
 async function fetchData(url, sectionId, title) {
-    console.log(`Fetching data from URL: ${url}`); // Log URL being fetched
+    console.log(`Fetching data from URL: ${url}`);
     try {
         const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Network response was not ok for ${url}`);
-        }
+        if (!response.ok) throw new Error(`Network response was not ok for ${url}`);
+        
         const data = await response.json();
-        console.log(`Data received for ${title}:`, data); // Log fetched data
+        console.log(`Data received for ${title}:`, data);
         displayData(sectionId, title, data);
-        // Directly initiate fetching children details if applicable
+        
         if (sectionId === 'inscriptionDetails' && data.inscriptionHash) {
-            console.log(`Found inscriptionHash for fetching children: ${data.inscriptionHash}`); // Log found inscriptionHash
+            console.log(`Found inscriptionHash for fetching children: ${data.inscriptionHash}`);
             await fetchAndDisplayChildCount(data.inscriptionHash);
         }
     } catch (error) {
         console.error('Fetch error:', error);
-        displayData(sectionId, title, { error: error.message });
-        console.log(`Failed to fetch or display data for: ${url}`);
+        displayData(sectionId, title, {error: error.message});
     }
 }
+
 
 function adjustIframeSize(iframe) {
     const width = iframe.clientWidth; // Use clientWidth for CSS width
